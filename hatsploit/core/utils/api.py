@@ -151,17 +151,13 @@ class API(object):
                     payloads = all_payloads[database]
 
                     for payload in sorted(payloads):
-                        data.update(
-                            {
-                                number: {
-                                    'Category': payloads[payload]['Category'],
-                                    'Payload': payloads[payload]['Payload'],
-                                    'Rank': payloads[payload]['Rank'],
-                                    'Name': payloads[payload]['Name'],
-                                    'Platform': payloads[payload]['Platform'],
-                                }
-                            }
-                        )
+                        data[number] = {
+                            'Category': payloads[payload]['Category'],
+                            'Payload': payloads[payload]['Payload'],
+                            'Rank': payloads[payload]['Rank'],
+                            'Name': payloads[payload]['Name'],
+                            'Platform': payloads[payload]['Platform'],
+                        }
 
                         number += 1
 
@@ -184,17 +180,13 @@ class API(object):
                     modules = all_modules[database]
 
                     for module in sorted(modules):
-                        data.update(
-                            {
-                                number: {
-                                    'Category': modules[module]['Category'],
-                                    'Module': modules[module]['Module'],
-                                    'Rank': modules[module]['Rank'],
-                                    'Name': modules[module]['Name'],
-                                    'Platform': modules[module]['Platform'],
-                                }
-                            }
-                        )
+                        data[number] = {
+                            'Category': modules[module]['Category'],
+                            'Module': modules[module]['Module'],
+                            'Rank': modules[module]['Rank'],
+                            'Name': modules[module]['Name'],
+                            'Platform': modules[module]['Platform'],
+                        }
 
                         number += 1
 
@@ -212,21 +204,14 @@ class API(object):
                             options[option]['Value'],
                             options[option]['Required'],
                         )
-                        if required:
-                            required = 'yes'
-                        else:
-                            required = 'no'
+                        required = 'yes' if required else 'no'
                         if not value and value != 0:
                             value = ""
-                        data.update(
-                            {
-                                option: {
-                                    'Value': value,
-                                    'Required': required,
-                                    'Description': options[option]['Description'],
-                                }
-                            }
-                        )
+                        data[option] = {
+                            'Value': value,
+                            'Required': required,
+                            'Description': options[option]['Description'],
+                        }
 
                     if hasattr(current_module, "payload"):
                         current_payload = self.payloads.get_current_payload(current_module)
@@ -239,23 +224,14 @@ class API(object):
                                     options[option]['Value'],
                                     options[option]['Required'],
                                 )
-                                if required:
-                                    required = 'yes'
-                                else:
-                                    required = 'no'
+                                required = 'yes' if required else 'no'
                                 if not value and value != 0:
                                     value = ""
-                                data.update(
-                                    {
-                                        option: {
-                                            'Value': value,
-                                            'Required': required,
-                                            'Description': options[option][
-                                                'Description'
-                                            ],
-                                        }
-                                    }
-                                )
+                                data[option] = {
+                                    'Value': value,
+                                    'Required': required,
+                                    'Description': options[option]['Description'],
+                                }
 
                 return jsonify(data)
 
@@ -299,33 +275,21 @@ class API(object):
                 if sessions:
                     for session in sessions:
                         if fetch == 'all':
-                            data.update(
-                                {
-                                    session: {
-                                        'Platform': sessions[session]['Platform'],
-                                        'Architecture': sessions[session][
-                                            'Architecture'
-                                        ],
-                                        'Type': sessions[session]['Type'],
-                                        'Host': sessions[session]['Host'],
-                                        'Port': sessions[session]['Port'],
-                                    }
-                                }
-                            )
+                            data[session] = {
+                                'Platform': sessions[session]['Platform'],
+                                'Architecture': sessions[session]['Architecture'],
+                                'Type': sessions[session]['Type'],
+                                'Host': sessions[session]['Host'],
+                                'Port': sessions[session]['Port'],
+                            }
                         elif fetch == sessions[session]['Platform']:
-                            data.update(
-                                {
-                                    session: {
-                                        'Platform': sessions[session]['Platform'],
-                                        'Architecture': sessions[session][
-                                            'Architecture'
-                                        ],
-                                        'Type': sessions[session]['Type'],
-                                        'Host': sessions[session]['Host'],
-                                        'Port': sessions[session]['Port'],
-                                    }
-                                }
-                            )
+                            data[session] = {
+                                'Platform': sessions[session]['Platform'],
+                                'Architecture': sessions[session]['Architecture'],
+                                'Type': sessions[session]['Type'],
+                                'Host': sessions[session]['Host'],
+                                'Port': sessions[session]['Port'],
+                            }
 
                 return jsonify(data)
 

@@ -60,15 +60,13 @@ class History(object):
             history.write("")
 
     def list_history(self):
-        using_history = self.local_storage.get("history")
-
-        if using_history:
+        if using_history := self.local_storage.get("history"):
             if readline.get_current_history_length() > -1:
-                history = []
-
-                for index in range(1, readline.get_current_history_length() + 1):
-                    history.append(readline.get_history_item(index))
-                return history
-
+                return [
+                    readline.get_history_item(index)
+                    for index in range(
+                        1, readline.get_current_history_length() + 1
+                    )
+                ]
             raise RuntimeWarning("HatSploit history empty.")
         raise RuntimeWarning("No HatSploit history detected.")

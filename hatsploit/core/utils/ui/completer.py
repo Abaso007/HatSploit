@@ -64,11 +64,10 @@ class Completer(object):
                     if command[0] in commands:
                         if hasattr(commands[command[0]], "complete"):
                             complete_function = commands[command[0]].complete
+                        elif 'Options' in commands[command[0]].details:
+                            options = commands[command[0]].details['Options']
                         else:
-                            if 'Options' in commands[command[0]].details:
-                                options = commands[command[0]].details['Options']
-                            else:
-                                complete_function = self.default_completer
+                            complete_function = self.default_completer
 
                     elif command[0] in other_commands:
                         if 'Options' in other_commands[command[0]]:

@@ -71,17 +71,12 @@ class HatSploitSession(Session, Loot, Pull, Push, ChannelClient):
     def download(self, remote_file, local_path):
         self.print_process(f"Downloading {remote_file}...")
 
-        data = self.pull(
+        if data := self.pull(
             platform=self.details['Platform'],
             sender=self.send_command,
             location=remote_file,
-            args={
-                'decode': False,
-                'output': True
-            }
-        )
-
-        if data:
+            args={'decode': False, 'output': True},
+        ):
             return self.save_file(
                 location=local_path,
                 data=data,
@@ -92,9 +87,7 @@ class HatSploitSession(Session, Loot, Pull, Push, ChannelClient):
 
     def upload(self, local_file, remote_path):
         self.print_process(f"Uploading {local_file}...")
-        data = self.get_file(local_file)
-
-        if data:
+        if data := self.get_file(local_file):
             remote_path = self.push(
                 platform=self.details['Platform'],
                 sender=self.send_command,
@@ -144,7 +137,7 @@ class Handler(object):
         max_size = 100000
 
         if len(stage) >= max_size and linemax not in range(min_size, max_size):
-            self.badges.print_process(f"Ensuring stage size ({str(len(stage))} bytes)...")
+            self.badges.print_process(f"Ensuring stage size ({len(stage)} bytes)...")
             linemax = max_size
 
         return linemax
@@ -169,16 +162,18 @@ class Handler(object):
         rhost = host
         options = module.handler
 
-        if 'BLINDER' in options:
-            if options['BLINDER'].lower() in ['yes', 'y']:
-                if sender is not None:
-                    self.handle(
-                        sender=sender,
-                        args=args,
-                        blinder=True
-                    )
+        if (
+            'BLINDER' in options
+            and options['BLINDER'].lower() in ['yes', 'y']
+            and sender is not None
+        ):
+            self.handle(
+                sender=sender,
+                args=args,
+                blinder=True
+            )
 
-                    return True
+            return True
 
         if payload.details['Type'] == 'bind_tcp':
             host = options['RBHOST']
@@ -191,11 +186,7 @@ class Handler(object):
         else:
             host, port = None, None
 
-        if 'Session' in payload.details:
-            session = payload.details['Session']
-        else:
-            session = None
-
+        session = payload.details['Session'] if 'Session' in payload.details else None
         if 'Arguments' in payload.details:
             arguments = payload.details['Arguments']
         else:
@@ -367,7 +358,7 @@ class Handler(object):
         if ensure:
             linemax = self.ensure_linemax(stage, linemax)
 
-        self.badges.print_process(f"Sending payload stage ({str(len(stage))} bytes)...")
+        self.badges.print_process(f"Sending payload stage ({len(stage)} bytes)...")
 
         self.do_job(
             p_type,

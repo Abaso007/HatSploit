@@ -31,16 +31,15 @@ class Parser(object):
 
     @staticmethod
     def parse_options(options, option=None):
-        if not option:
-            values = []
-            for option_name in options:
-                if option_name.upper() not in Options().handler_options['Module']:
-                    if option_name.upper() not in Options().handler_options['Payload']:
-                        values.append(str(options[option_name]['Value']))
-            if len(values) == 1:
-                return values[0]
-            return values
-        return str(options[option]['Value'])
+        if option:
+            return str(options[option]['Value'])
+        values = [
+            str(options[option_name]['Value'])
+            for option_name in options
+            if option_name.upper() not in Options().handler_options['Module']
+            and option_name.upper() not in Options().handler_options['Payload']
+        ]
+        return values[0] if len(values) == 1 else values
 
     @staticmethod
     def parse_ports_range(ports_range):

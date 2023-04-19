@@ -45,7 +45,4 @@ class HatSploitCommand(Command, TCPTools):
 
                 self.jobs.create_job(f"REST API on port {argv[2]}", None, rest_api.run)
             else:
-                self.print_error(f"Failed to start REST API server!")
-
-        elif argv[1] == 'off':
-            pass
+                self.print_error("Failed to start REST API server!")

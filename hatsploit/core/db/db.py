@@ -35,45 +35,50 @@ class DB(object):
         self.local_storage = LocalStorage()
 
     def disconnect_payload_database(self, name):
-        if self.local_storage.get("connected_payload_databases"):
-            if name in self.local_storage.get("connected_payload_databases"):
-                self.local_storage.delete_element("connected_payload_databases", name)
-                self.local_storage.delete_element("payloads", name)
-                return
+        if self.local_storage.get(
+            "connected_payload_databases"
+        ) and name in self.local_storage.get("connected_payload_databases"):
+            self.local_storage.delete_element("connected_payload_databases", name)
+            self.local_storage.delete_element("payloads", name)
+            return
 
         raise RuntimeError("No such payload database connected!")
 
     def disconnect_encoder_database(self, name):
-        if self.local_storage.get("connected_encoder_databases"):
-            if name in self.local_storage.get("connected_encoder_databases"):
-                self.local_storage.delete_element("connected_encoder_databases", name)
-                self.local_storage.delete_element("encoders", name)
-                return
+        if self.local_storage.get(
+            "connected_encoder_databases"
+        ) and name in self.local_storage.get("connected_encoder_databases"):
+            self.local_storage.delete_element("connected_encoder_databases", name)
+            self.local_storage.delete_element("encoders", name)
+            return
 
         raise RuntimeError("No such encoder database connected!")
 
     def disconnect_module_database(self, name):
-        if self.local_storage.get("connected_module_databases"):
-            if name in self.local_storage.get("connected_module_databases"):
-                self.local_storage.delete_element("connected_module_databases", name)
-                self.local_storage.delete_element("modules", name)
-                return
+        if self.local_storage.get(
+            "connected_module_databases"
+        ) and name in self.local_storage.get("connected_module_databases"):
+            self.local_storage.delete_element("connected_module_databases", name)
+            self.local_storage.delete_element("modules", name)
+            return
 
         raise RuntimeError("No such module database connected!")
 
     def disconnect_plugin_database(self, name):
-        if self.local_storage.get("connected_plugin_databases"):
-            if name in self.local_storage.get("connected_plugin_databases"):
-                self.local_storage.delete_element("connected_plugin_databases", name)
-                self.local_storage.delete_element("plugins", name)
-                return
+        if self.local_storage.get(
+            "connected_plugin_databases"
+        ) and name in self.local_storage.get("connected_plugin_databases"):
+            self.local_storage.delete_element("connected_plugin_databases", name)
+            self.local_storage.delete_element("plugins", name)
+            return
 
         raise RuntimeError("No such plugin database connected!")
 
     def connect_encoder_database(self, name, path):
-        if self.local_storage.get("connected_encoder_databases"):
-            if name in self.local_storage.get("connected_encoder_databases"):
-                raise RuntimeWarning(f"Encoder database is already connected: {path}.")
+        if self.local_storage.get(
+            "connected_encoder_databases"
+        ) and name in self.local_storage.get("connected_encoder_databases"):
+            raise RuntimeWarning(f"Encoder database is already connected: {path}.")
 
         if not os.path.exists(path) or not str.endswith(path, "json"):
             raise RuntimeError(f"Not an encoder database: {path}!")
@@ -104,9 +109,10 @@ class DB(object):
             self.local_storage.set("encoders", encoders)
 
     def connect_payload_database(self, name, path):
-        if self.local_storage.get("connected_payload_databases"):
-            if name in self.local_storage.get("connected_payload_databases"):
-                raise RuntimeWarning(f"Payload database is already connected: {path}.")
+        if self.local_storage.get(
+            "connected_payload_databases"
+        ) and name in self.local_storage.get("connected_payload_databases"):
+            raise RuntimeWarning(f"Payload database is already connected: {path}.")
 
         if not os.path.exists(path) or not str.endswith(path, "json"):
             raise RuntimeError(f"Not a payload database: {path}!")
@@ -137,9 +143,10 @@ class DB(object):
             self.local_storage.set("payloads", payloads)
 
     def connect_module_database(self, name, path):
-        if self.local_storage.get("connected_module_databases"):
-            if name in self.local_storage.get("connected_module_databases"):
-                raise RuntimeWarning(f"Module database is already connected: {path}.")
+        if self.local_storage.get(
+            "connected_module_databases"
+        ) and name in self.local_storage.get("connected_module_databases"):
+            raise RuntimeWarning(f"Module database is already connected: {path}.")
 
         if not os.path.exists(path) or not str.endswith(path, "json"):
             raise RuntimeError(f"Not a module database: {path}!")
@@ -170,9 +177,10 @@ class DB(object):
             self.local_storage.set("modules", modules)
 
     def connect_plugin_database(self, name, path):
-        if self.local_storage.get("connected_plugin_databases"):
-            if name in self.local_storage.get("connected_plugin_databases"):
-                raise RuntimeWarning(f"Plugin database is already connected: {path}.")
+        if self.local_storage.get(
+            "connected_plugin_databases"
+        ) and name in self.local_storage.get("connected_plugin_databases"):
+            raise RuntimeWarning(f"Plugin database is already connected: {path}.")
 
         if not os.path.exists(path) or not str.endswith(path, "json"):
             raise RuntimeError(f"Not a plugin database: {path}!")

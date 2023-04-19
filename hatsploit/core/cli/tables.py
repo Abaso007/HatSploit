@@ -41,9 +41,7 @@ class Tables(object):
         def custom_len(x):
             x = str(x)
             try:
-                if '\033' in x:
-                    return len(x) - 9 * x.count('\033') // 2
-                return len(x)
+                return len(x) - 9 * x.count('\033') // 2 if '\033' in x else len(x)
             except TypeError:
                 return 0
 

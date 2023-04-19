@@ -40,9 +40,7 @@ class HatSploitPlugin(Plugin):
             return ["<", ">"]
         if index == 0:
             return ["/", "\\"]
-        if index == len(lines) - 1:
-            return ["\\", "/"]
-        return ["|", "|"]
+        return ["\\", "/"] if index == len(lines) - 1 else ["|", "|"]
 
     @staticmethod
     def build_cow():
@@ -61,13 +59,12 @@ class HatSploitPlugin(Plugin):
         return [line.ljust(maxlen) for line in lines]
 
     def build_bubble(self, message, length=40):
-        bubble = []
         lines = self.normalize_text(message, length)
         bordersize = len(lines[0])
-        bubble.append(" __" + "_" * bordersize)
+        bubble = [" __" + "_" * bordersize]
         for index, line in enumerate(lines):
             border = self.get_border(lines, index)
-            bubble.append("%s %s %s" % (border[0], line, border[1]))
+            bubble.append(f"{border[0]} {line} {border[1]}")
         bubble.append(" --" + "-" * bordersize)
         return "\n".join(bubble)
 

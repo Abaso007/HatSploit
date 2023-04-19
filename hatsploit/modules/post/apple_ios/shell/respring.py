@@ -34,7 +34,5 @@ class HatSploitModule(Module, Sessions):
 
     def run(self):
         session = self.parse_options(self.options)
-        session = self.get_session(session)
-
-        if session:
+        if session := self.get_session(session):
             session.send_command("killall SpringBoard")

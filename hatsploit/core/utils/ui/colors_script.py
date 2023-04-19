@@ -56,13 +56,13 @@ class ColorsScript(object):
         }
 
     def parse(self, line):
-        if line and line[0:8] != "%comment" and not line.isspace():
+        if line and line[:8] != "%comment" and not line.isspace():
             for command in self.commands:
                 line = line.replace(command, self.commands[command])
         return line
 
     def libreadline(self, line):
-        if line and line[0:8] != "%comment" and not line.isspace():
+        if line and line[:8] != "%comment" and not line.isspace():
             for command in self.commands:
                 line = line.replace(command, f'\001{command}\002')
         return line
@@ -71,17 +71,18 @@ class ColorsScript(object):
     def _read_file_lines(path):
         lines = []
         with open(path) as file:
-            for line in file:
-                if line and line[0:8] != "%comment" and not line.isspace():
-                    lines.append(line)
+            lines.extend(
+                line
+                for line in file
+                if line and line[:8] != "%comment" and not line.isspace()
+            )
         return lines
 
     @staticmethod
     def _reverse_read_lines(path):
         lines = []
         with open(path) as file:
-            for line in reversed(list(file)):
-                lines.append(line)
+            lines.extend(iter(reversed(list(file))))
         return lines
 
     def _reversed_find_last_commands(self, lines):
@@ -114,7 +115,6 @@ class ColorsScript(object):
         return lines
 
     def parse_colors_script(self, path):
-        result = ""
         lines = self._read_file_lines(path)
         reversed_lines = self._reverse_read_lines(path)
 
@@ -124,37 +124,34 @@ class ColorsScript(object):
         lines = self._remove_empty_lines(lines)
         lines[-1] = lines[-1].strip('\n') + last_commands
 
-        if path.endswith(self.script_extension):
-            try:
-                buffer_commands = ""
-                for line in lines:
-                    buffer_line = line
+        if not path.endswith(self.script_extension):
+            return None
+        result = ""
+        try:
+            buffer_commands = ""
+            for line in lines:
+                buffer_line = line
+
+                for command in self.commands:
+                    if command in buffer_line:
+                        buffer_line = buffer_line.replace(command, " ")
+
+                if buffer_line.isspace():
+                    buffer_commands += line.strip()
+                else:
+                    line = buffer_commands + line
+                    buffer_commands = ""
 
                     for command in self.commands:
-                        if command in buffer_line:
-                            buffer_line = buffer_line.replace(command, " ")
+                        line = line.partition('%comment')[0]
+                        line = line.replace(command, self.commands[command])
+                    result += line
 
-                    if buffer_line.isspace():
-                        buffer_commands += line.strip()
-                    else:
-                        line = buffer_commands + line
-                        buffer_commands = ""
-
-                        for command in self.commands:
-                            line = line.partition('%comment')[0]
-                            line = line.replace(command, self.commands[command])
-                        result += line
-
-                return result
-            except Exception:
-                return None
-        else:
+            return result
+        except Exception:
             return None
 
     def compile_colors_script(self, path, outfile='a.out'):
-        result = self.parse_colors_script(path)
-
-        if result:
-            output = open(outfile, 'wb')
-            output.write(result.encode())
-            output.close()
+        if result := self.parse_colors_script(path):
+            with open(outfile, 'wb') as output:
+                output.write(result.encode())

@@ -39,10 +39,10 @@ class Config(object):
         self.user_path = f'{pathlib.Path.home()}/.hsf/'
         self.base_path = f'{os.path.dirname(os.path.dirname(__file__))}/'
 
-        self.config_path = self.base_path + 'config/'
+        self.config_path = f'{self.base_path}config/'
 
-        self.db_config_file = self.config_path + 'db_config.yml'
-        self.core_config_file = self.config_path + 'core_config.yml'
+        self.db_config_file = f'{self.config_path}db_config.yml'
+        self.core_config_file = f'{self.config_path}core_config.yml'
 
         self.db_config = self.local_storage.get("db_config")
         self.path_config = {

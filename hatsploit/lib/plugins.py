@@ -45,22 +45,20 @@ class Plugins(object):
 
         if plugins:
             for database in plugins:
-                for plugin in plugins[database]:
-                    if plugin.startswith(text):
-                        matches.append(plugin)
-
+                matches.extend(
+                    plugin
+                    for plugin in plugins[database]
+                    if plugin.startswith(text)
+                )
         return matches
 
     def loaded_plugins_completer(self, text):
-        plugins = self.get_loaded_plugins()
-
-        if plugins:
+        if plugins := self.get_loaded_plugins():
             return [plugin for plugin in plugins if plugin.startswith(text)]
         return []
 
     def check_exist(self, name):
-        all_plugins = self.get_plugins()
-        if all_plugins:
+        if all_plugins := self.get_plugins():
             for database in all_plugins:
                 plugins = all_plugins[database]
                 if name in plugins:
@@ -68,15 +66,13 @@ class Plugins(object):
         return False
 
     def check_loaded(self, name):
-        loaded_plugins = self.get_loaded_plugins()
-        if loaded_plugins:
+        if loaded_plugins := self.get_loaded_plugins():
             if name in loaded_plugins:
                 return True
         return False
 
     def get_database(self, name):
-        all_plugins = self.get_plugins()
-        if all_plugins:
+        if all_plugins := self.get_plugins():
             for database in all_plugins:
                 plugins = all_plugins[database]
                 if name in plugins:
@@ -98,8 +94,7 @@ class Plugins(object):
     def add_plugin(self, database, plugin):
         plugins = self.get_plugins()[database][plugin]
 
-        plugin_object = self.import_plugin(database, plugin)
-        if plugin_object:
+        if plugin_object := self.import_plugin(database, plugin):
             if self.get_loaded_plugins():
                 self.local_storage.update("loaded_plugins", plugin_object)
             else:
@@ -109,28 +104,23 @@ class Plugins(object):
             raise RuntimeError(f"Failed to load plugin: {cowsay}!")
 
     def load_plugin(self, plugin):
-        plugins_shorts = self.local_storage.get("plugin_shorts")
-
-        if plugins_shorts:
+        if plugins_shorts := self.local_storage.get("plugin_shorts"):
             if plugin.isdigit():
                 plugin_number = int(plugin)
 
                 if plugin_number in plugins_shorts:
                     plugin = plugins_shorts[plugin_number]
 
-        if not self.check_loaded(plugin):
-            if self.check_exist(plugin):
-                database = self.get_database(plugin)
-                self.add_plugin(database, plugin)
-            else:
-                raise RuntimeError(f"Invalid plugin: {plugin}!")
-        else:
+        if self.check_loaded(plugin):
             raise RuntimeWarning(f"Plugin is already loaded: {plugin}.")
+        if self.check_exist(plugin):
+            database = self.get_database(plugin)
+            self.add_plugin(database, plugin)
+        else:
+            raise RuntimeError(f"Invalid plugin: {plugin}!")
 
     def unload_plugin(self, plugin):
-        plugins_shorts = self.local_storage.get("plugin_shorts")
-
-        if plugins_shorts:
+        if plugins_shorts := self.local_storage.get("plugin_shorts"):
             if plugin.isdigit():
                 plugin_number = int(plugin)
 

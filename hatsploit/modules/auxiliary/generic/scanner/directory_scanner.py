@@ -60,12 +60,6 @@ class HatSploitModule(Module, HTTPClient):
 
             if response is not None:
                 if response.status_code == 200:
-                    self.print_success(
-                        "[%s] ... [%s %s]"
-                        % (path, response.status_code, response.reason)
-                    )
+                    self.print_success(f"[{path}] ... [{response.status_code} {response.reason}]")
                 else:
-                    self.print_warning(
-                        "[%s] ... [%s %s]"
-                        % (path, response.status_code, response.reason)
-                    )
+                    self.print_warning(f"[{path}] ... [{response.status_code} {response.reason}]")

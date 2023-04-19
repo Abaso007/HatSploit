@@ -39,7 +39,7 @@ class HatSploitModule(Module, TCPTools):
         }
 
     def check_port(self, remote_host, port):
-        target = remote_host + '/' + str(port)
+        target = f'{remote_host}/{str(port)}'
         if self.check_tcp_port(remote_host, port):
             self.print_success(f"{target} - opened")
 

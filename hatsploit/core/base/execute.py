@@ -48,14 +48,16 @@ class Execute(object):
         self.show = Show()
 
     def execute_command(self, commands):
-        if commands:
-            if not self.execute_builtin_method(commands):
-                if not self.execute_core_command(commands):
-                    if not self.execute_module_command(commands):
-                        if not self.execute_plugin_command(commands):
-                            self.badges.print_error(
-                                f"Unrecognized command: {commands[0]}!"
-                            )
+        if (
+            commands
+            and not self.execute_builtin_method(commands)
+            and not self.execute_core_command(commands)
+            and not self.execute_module_command(commands)
+            and not self.execute_plugin_command(commands)
+        ):
+            self.badges.print_error(
+                f"Unrecognized command: {commands[0]}!"
+            )
 
     def execute_builtin_method(self, commands):
         if commands[0][0] == '#':
@@ -88,35 +90,28 @@ class Execute(object):
             self.badges.print_error(f"Unrecognized system command: {commands[0]}!")
 
     def execute_custom_command(self, commands, handler):
-        if handler:
-            if commands[0] in handler:
-                command = handler[commands[0]]
-                if not self.check_arguments(commands, command.details):
-                    self.parse_usage(command.details)
-                else:
-                    command.run(len(commands), commands)
-                return True
+        if handler and commands[0] in handler:
+            command = handler[commands[0]]
+            if not self.check_arguments(commands, command.details):
+                self.parse_usage(command.details)
+            else:
+                command.run(len(commands), commands)
+            return True
         return False
 
     @staticmethod
     def check_arguments(commands, details):
         if (len(commands) - 1) < details['MinArgs']:
             return False
-        if 'Options' in details:
-            if len(commands) > 1:
-                if commands[1] in details['Options']:
-                    if (len(commands) - 2) < len(
-                            details['Options'][commands[1]][0].split()
-                    ):
-                        return False
-                else:
-                    return False
-
-        if len(commands) > 1:
-            if commands[1] == '?':
+        if 'Options' in details and len(commands) > 1:
+            if commands[1] not in details['Options']:
                 return False
 
-        return True
+            if (len(commands) - 2) < len(
+                    details['Options'][commands[1]][0].split()
+            ):
+                return False
+        return len(commands) <= 1 or commands[1] != '?'
 
     def parse_usage(self, details):
         self.badges.print_usage(details['Usage'])
@@ -135,13 +130,15 @@ class Execute(object):
         return self.execute_custom_command(commands, self.local_storage.get("commands"))
 
     def execute_module_command(self, commands):
-        if self.modules.get_current_module():
-            if hasattr(self.modules.get_current_module(), "commands"):
-                if commands[0] in self.modules.get_current_module().commands:
-                    command_object = self.modules.get_current_module()
-                    command = self.modules.get_current_module().commands[commands[0]]
-                    self.parse_and_execute_command(commands, command, command_object)
-                    return True
+        if (
+            self.modules.get_current_module()
+            and hasattr(self.modules.get_current_module(), "commands")
+            and commands[0] in self.modules.get_current_module().commands
+        ):
+            command_object = self.modules.get_current_module()
+            command = self.modules.get_current_module().commands[commands[0]]
+            self.parse_and_execute_command(commands, command, command_object)
+            return True
         return False
 
     def execute_plugin_command(self, commands):

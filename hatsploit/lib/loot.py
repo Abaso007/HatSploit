@@ -51,7 +51,7 @@ class Loot(String, FS):
         filename = self.random_string(16)
 
         if extension:
-            filename += '.' + extension
+            filename += f'.{extension}'
 
         return self.loot + filename
 
@@ -69,11 +69,14 @@ class Loot(String, FS):
                 if location.endswith('/'):
                     location += os.path.split(filename)[1] if filename else self.random_string(16)
                 else:
-                    location += '/' + os.path.split(filename)[1] if filename else self.random_string(16)
+                    location += (
+                        f'/{os.path.split(filename)[1]}'
+                        if filename
+                        else self.random_string(16)
+                    )
 
-            if extension:
-                if not location.endswith('.' + extension):
-                    location += '.' + extension
+            if extension and not location.endswith(f'.{extension}'):
+                location += f'.{extension}'
 
             with open(location, 'wb') as f:
                 f.write(data)
@@ -109,13 +112,13 @@ class Loot(String, FS):
             raise RuntimeError("Invalid data given!")
 
     def list_loot(self):
-        loots = []
-
-        for loot in os.listdir(self.loot):
-            loots.append((loot, self.loot + loot, datetime.datetime.fromtimestamp(
-                os.path.getmtime(
-                    self.loot + loot
-                )).astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
-                          ))
-
-        return loots
+        return [
+            (
+                loot,
+                self.loot + loot,
+                datetime.datetime.fromtimestamp(os.path.getmtime(self.loot + loot))
+                .astimezone()
+                .strftime("%Y-%m-%d %H:%M:%S %Z"),
+            )
+            for loot in os.listdir(self.loot)
+        ]

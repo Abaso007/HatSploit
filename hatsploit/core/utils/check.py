@@ -47,7 +47,7 @@ class Check(object):
         for dest, _, files in os.walk(modules_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    module = dest + '/' + file[:-3]
+                    module = f'{dest}/{file[:-3]}'
 
                     try:
                         module_object = self.importer.import_module(module)
@@ -79,7 +79,7 @@ class Check(object):
         for dest, _, files in os.walk(encoders_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    encoder = dest + '/' + file[:-3]
+                    encoder = f'{dest}/{file[:-3]}'
 
                     try:
                         encoder_object = self.importer.import_encoder(encoder)
@@ -109,7 +109,7 @@ class Check(object):
         for dest, _, files in os.walk(payloads_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    payload = dest + '/' + file[:-3]
+                    payload = f'{dest}/{file[:-3]}'
 
                     try:
                         payload_object = self.importer.import_payload(payload)
@@ -142,7 +142,7 @@ class Check(object):
         for dest, _, files in os.walk(plugins_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    plugin = dest + '/' + file[:-3]
+                    plugin = f'{dest}/{file[:-3]}'
 
                     try:
                         plugin_object = self.importer.import_plugin(plugin)
@@ -158,9 +158,8 @@ class Check(object):
         return not one_fail
 
     def check_all(self):
-        fails = list()
+        fails = [self.check_modules()]
 
-        fails.append(self.check_modules())
         fails.append(self.check_payloads())
         fails.append(self.check_encoders())
         fails.append(self.check_plugins())

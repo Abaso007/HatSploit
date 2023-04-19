@@ -50,10 +50,11 @@ class Payloads(object):
 
         if payloads:
             for database in payloads:
-                for payload in payloads[database]:
-                    if payload.startswith(text):
-                        matches.append(payload)
-
+                matches.extend(
+                    payload
+                    for payload in payloads[database]
+                    if payload.startswith(text)
+                )
         return matches
 
     def get_payloads(self):
@@ -63,8 +64,7 @@ class Payloads(object):
         return self.local_storage.get("imported_payloads")
 
     def get_database(self, name):
-        all_payloads = self.get_payloads()
-        if all_payloads:
+        if all_payloads := self.get_payloads():
             for database in all_payloads:
                 payloads = all_payloads[database]
 
@@ -88,18 +88,18 @@ class Payloads(object):
 
     def get_current_payload(self, current_module):
         imported_payloads = self.get_imported_payloads()
-        current_module_object = current_module
-
-        if current_module_object:
-            current_module_name = current_module_object.details['Module']
-
+        if current_module_object := current_module:
             if hasattr(current_module_object, "payload"):
                 name = current_module_object.payload['Value']
 
-                if imported_payloads:
-                    if current_module_name in imported_payloads:
-                        if name in imported_payloads[current_module_name]:
-                            return imported_payloads[current_module_name][name]
+                current_module_name = current_module_object.details['Module']
+
+                if (
+                    imported_payloads
+                    and current_module_name in imported_payloads
+                    and name in imported_payloads[current_module_name]
+                ):
+                    return imported_payloads[current_module_name][name]
         return None
 
     def search_payload(self, name):
@@ -140,8 +140,7 @@ class Payloads(object):
         return payload_object
 
     def check_exist(self, payload):
-        all_payloads = self.get_payloads()
-        if all_payloads:
+        if all_payloads := self.get_payloads():
             for database in all_payloads:
                 payloads = all_payloads[database]
 
@@ -153,30 +152,24 @@ class Payloads(object):
         imported_payloads = self.get_imported_payloads()
         current_module_name = module_name
 
-        if imported_payloads:
-            if current_module_name in imported_payloads:
-                if payload in imported_payloads[current_module_name]:
-                    return True
-        return False
+        return bool(
+            imported_payloads
+            and current_module_name in imported_payloads
+            and payload in imported_payloads[current_module_name]
+        )
 
     def check_module_compatible(self, value, types, platforms, architectures):
-        if self.check_exist(value):
-            payload = self.get_payload_object(value)
+        if not self.check_exist(value):
+            return False
+        payload = self.get_payload_object(value)
 
-            if types:
-                if payload['Type'] not in types:
-                    return False
+        if types and payload['Type'] not in types:
+            return False
 
-            if platforms:
-                if payload['Platform'] not in platforms:
-                    return False
+        if platforms and payload['Platform'] not in platforms:
+            return False
 
-            if architectures:
-                if payload['Architecture'] not in architectures:
-                    return False
-
-            return True
-        return False
+        return not architectures or payload['Architecture'] in architectures
 
     def add_payload(self, module_name, payload):
         if not self.check_imported(module_name, payload):
@@ -185,20 +178,16 @@ class Payloads(object):
                 raise RuntimeError(f"Failed to select payload from database: {payload}!")
 
     def generate_payload(self, payload, options={}, encoder=None):
-        payload_object = self.get_payload(payload)
-        if payload_object:
-            self.options.add_payload_handler(payload_object)
+        if not (payload_object := self.get_payload(payload)):
+            return None
+        self.options.add_payload_handler(payload_object)
 
-            if hasattr(payload_object, "options"):
-                for option in options:
-                    payload_object.options[option]['Value'] = options[option]
+        if hasattr(payload_object, "options"):
+            for option in options:
+                payload_object.options[option]['Value'] = options[option]
 
-            encoder_object = None
-            if encoder:
-                encoder_object = self.encoders.get_encoder(encoder)
-
-            return self.run_payload(payload_object, encoder_object)
-        return None
+        encoder_object = self.encoders.get_encoder(encoder) if encoder else None
+        return self.run_payload(payload_object, encoder_object)
 
     def pack_payload(self, payload, platform, architecture):
         formats = self.types.formats
@@ -235,6 +224,6 @@ class Payloads(object):
             for option in current_payload.options:
                 current_option = current_payload.options[option]
                 if not current_option['Value'] and current_option['Value'] != 0 and current_option['Required']:
-                    missed += option + ', '
+                    missed += f'{option}, '
 
         return missed

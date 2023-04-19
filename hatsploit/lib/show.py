@@ -62,7 +62,9 @@ class Show(object):
             label = commands[command].details['Category']
             commands_data[label].append((command, commands[command].details['Description']))
         for label in sorted(commands_data):
-            self.tables.print_table(label.title() + " Commands", headers, *commands_data[label])
+            self.tables.print_table(
+                f"{label.title()} Commands", headers, *commands_data[label]
+            )
 
     def show_interface_commands(self):
         if self.local_storage.get("commands"):
@@ -82,16 +84,19 @@ class Show(object):
                     for command in sorted(commands[label]):
                         commands_data[label].append((command, commands[label][command]['Description']))
                 for label in sorted(commands_data):
-                    self.tables.print_table(label.title() + " Commands", headers, *commands_data[label])
+                    self.tables.print_table(
+                        f"{label.title()} Commands", headers, *commands_data[label]
+                    )
 
     def show_module_commands(self):
         current_module = self.modules.get_current_module()
         if hasattr(current_module, "commands"):
-            commands_data = []
             headers = ("Command", "Description")
             commands = current_module.commands
-            for command in sorted(commands):
-                commands_data.append((command, commands[command]['Description']))
+            commands_data = [
+                (command, commands[command]['Description'])
+                for command in sorted(commands)
+            ]
             self.tables.print_table("Module Commands", headers, *commands_data)
 
     def show_all_commands(self):
@@ -102,79 +107,70 @@ class Show(object):
             self.show_plugin_commands()
 
     def show_jobs(self):
-        if self.local_storage.get("jobs"):
-            jobs_data = []
-            headers = ("ID", "Name", "Module")
-            jobs = self.local_storage.get("jobs")
-            for job_id in jobs:
-                jobs_data.append((job_id, jobs[job_id]['Name'], jobs[job_id]['Module']))
-            self.tables.print_table("Active Jobs", headers, *jobs_data)
-        else:
+        if not self.local_storage.get("jobs"):
             raise RuntimeWarning("No running jobs available.")
+        headers = ("ID", "Name", "Module")
+        jobs = self.local_storage.get("jobs")
+        jobs_data = [
+            (job_id, jobs[job_id]['Name'], jobs[job_id]['Module'])
+            for job_id in jobs
+        ]
+        self.tables.print_table("Active Jobs", headers, *jobs_data)
 
     def show_loot(self):
-        loots = self.loot.list_loot()
-        if loots:
+        if loots := self.loot.list_loot():
             headers = ("Loot", "Path", "Time")
             self.tables.print_table("Collected Loot", headers, *loots)
         else:
             raise RuntimeWarning("No loot collected yet.")
 
     def show_module_databases(self):
-        if self.local_storage.get("connected_module_databases"):
-            databases_data = []
-            number = 0
-            headers = ("Number", "Name", "Path")
-            databases = self.local_storage.get("connected_module_databases")
-
-            for name in databases:
-                databases_data.append((number, name, databases[name]['Path']))
-                number += 1
-            self.tables.print_table("Connected Module Databases", headers, *databases_data)
-        else:
+        if not self.local_storage.get("connected_module_databases"):
             raise RuntimeWarning("No module databases connected.")
+        headers = ("Number", "Name", "Path")
+        databases = self.local_storage.get("connected_module_databases")
+
+        databases_data = [
+            (number, name, databases[name]['Path'])
+            for number, name in enumerate(databases)
+        ]
+        self.tables.print_table("Connected Module Databases", headers, *databases_data)
 
     def show_payload_databases(self):
-        if self.local_storage.get("connected_payload_databases"):
-            databases_data = []
-            number = 0
-            headers = ("Number", "Name", "Path")
-            databases = self.local_storage.get("connected_payload_databases")
-
-            for name in databases:
-                databases_data.append((number, name, databases[name]['Path']))
-                number += 1
-            self.tables.print_table("Connected Payload Databases", headers, *databases_data)
-        else:
+        if not self.local_storage.get("connected_payload_databases"):
             raise RuntimeWarning("No payload databases connected.")
+        headers = ("Number", "Name", "Path")
+        databases = self.local_storage.get("connected_payload_databases")
+
+        databases_data = [
+            (number, name, databases[name]['Path'])
+            for number, name in enumerate(databases)
+        ]
+        self.tables.print_table("Connected Payload Databases", headers, *databases_data)
 
     def show_encoder_databases(self):
-        if self.local_storage.get("connected_encoder_databases"):
-            databases_data = []
-            number = 0
-            headers = ("Number", "Name", "Path")
-            databases = self.local_storage.get("connected_encoder_databases")
-
-            for name in databases:
-                databases_data.append((number, name, databases[name]['Path']))
-                number += 1
-            self.tables.print_table("Connected Encoder Databases", headers, *databases_data)
-        else:
+        if not self.local_storage.get("connected_encoder_databases"):
             raise RuntimeWarning("No encoder databases connected.")
+        headers = ("Number", "Name", "Path")
+        databases = self.local_storage.get("connected_encoder_databases")
+
+        databases_data = [
+            (number, name, databases[name]['Path'])
+            for number, name in enumerate(databases)
+        ]
+        self.tables.print_table("Connected Encoder Databases", headers, *databases_data)
 
     def show_plugin_databases(self):
-        if self.local_storage.get("connected_plugin_databases"):
-            databases_data = []
-            number = 0
-            headers = ("Number", "Name", "Path")
-            databases = self.local_storage.get("connected_plugin_databases")
-
-            for name in databases:
-                databases_data.append((number, name, databases[name]['Path']))
-                number += 1
-            self.tables.print_table("Connected Plugin Databases", headers, *databases_data)
-        else:
+        if not self.local_storage.get("connected_plugin_databases"):
             raise RuntimeWarning("No plugin databases connected.")
+        headers = ("Number", "Name", "Path")
+        databases = self.local_storage.get("connected_plugin_databases")
+
+        databases_data = [
+            (number, name, databases[name]['Path'])
+            for number, name in enumerate(databases)
+        ]
+        self.tables.print_table("Connected Plugin Databases", headers, *databases_data)
 
     def show_plugins(self):
         all_plugins = self.local_storage.get("plugins")
@@ -189,7 +185,7 @@ class Show(object):
 
             for plugin in sorted(plugins):
                 plugins_data.append((number, plugins[plugin]['Plugin'], plugins[plugin]['Name']))
-                plugins_shorts.update({number: plugins[plugin]['Plugin']})
+                plugins_shorts[number] = plugins[plugin]['Plugin']
                 number += 1
 
             self.tables.print_table(f"Plugins ({database})", headers, *plugins_data)
@@ -212,7 +208,7 @@ class Show(object):
 
             for encoder in sorted(encoders):
                 encoders_data.append((number, encoders[encoder]['Encoder'], encoders[encoder]['Name']))
-                encoders_shorts.update({number: encoders[encoder]['Encoder']})
+                encoders_shorts[number] = encoders[encoder]['Encoder']
                 number += 1
 
             self.tables.print_table(f"Encoders ({database})", headers, *encoders_data)
@@ -234,18 +230,15 @@ class Show(object):
             modules = all_modules[database]
 
             for module in sorted(modules):
-                if category:
-                    if category == modules[module]['Category']:
-                        modules_data.append((number, modules[module]['Category'], modules[module]['Module'],
-                                             modules[module]['Rank'], modules[module]['Name']))
-                        modules_shorts.update({number: modules[module]['Module']})
-                        number += 1
-                else:
+                if (
+                    category
+                    and category == modules[module]['Category']
+                    or not category
+                ):
                     modules_data.append((number, modules[module]['Category'], modules[module]['Module'],
                                          modules[module]['Rank'], modules[module]['Name']))
-                    modules_shorts.update({number: modules[module]['Module']})
+                    modules_shorts[number] = modules[module]['Module']
                     number += 1
-
             if category:
                 self.tables.print_table(f"{category.title()} Modules ({database})", headers, *modules_data)
             else:
@@ -270,7 +263,7 @@ class Show(object):
             for payload in sorted(payloads):
                 payloads_data.append((number, payloads[payload]['Payload'], payloads[payload]['Rank'],
                                       payloads[payload]['Name']))
-                payloads_shorts.update({number: payloads[payload]['Payload']})
+                payloads_shorts[number] = payloads[payload]['Payload']
                 number += 1
 
             self.tables.print_table(f"Payloads ({database})", headers, *payloads_data)
@@ -298,7 +291,7 @@ class Show(object):
                         keyword, self.colors.RED + keyword + self.colors.END)
 
                     plugins_data.append((number, name, description))
-                    plugins_shorts.update({number: plugins[plugin]['Plugin']})
+                    plugins_shorts[number] = plugins[plugin]['Plugin']
 
                     number += 1
 
@@ -327,7 +320,7 @@ class Show(object):
                         keyword, self.colors.RED + keyword + self.colors.END)
 
                     encoders_data.append((number, name, description))
-                    encoders_shorts.update({number: encoders[encoder]['Encoder']})
+                    encoders_shorts[number] = encoders[encoder]['Encoder']
 
                     number += 1
 
@@ -356,7 +349,7 @@ class Show(object):
 
                     modules_data.append((number, modules[module]['Category'], name,
                                          modules[module]['Rank'], description))
-                    modules_shorts.update({number: modules[module]['Module']})
+                    modules_shorts[number] = modules[module]['Module']
 
                     number += 1
 
@@ -385,7 +378,7 @@ class Show(object):
                         keyword, self.colors.RED + keyword + self.colors.END)
 
                     payloads_data.append((number, name, payloads[payload]['Rank'], description))
-                    payloads_shorts.update({number: payloads[payload]['Payload']})
+                    payloads_shorts[number] = payloads[payload]['Payload']
 
                     number += 1
 
@@ -396,21 +389,19 @@ class Show(object):
             self.local_storage.set("payload_shorts", payloads_shorts)
 
     def show_sessions(self):
-        sessions = self.local_storage.get("sessions")
-        if sessions:
-            sessions_data = []
-            headers = ("ID", "Platform", "Architecture", "Type", "Host", "Port")
-            for session_id in sessions:
-                session_platform = sessions[session_id]['Platform']
-                session_architecture = sessions[session_id]['Architecture']
-                session_type = sessions[session_id]['Type']
-                host = sessions[session_id]['Host']
-                port = sessions[session_id]['Port']
-
-                sessions_data.append((session_id, session_platform, session_architecture, session_type, host, port))
-            self.tables.print_table("Opened Sessions", headers, *sessions_data)
-        else:
+        if not (sessions := self.local_storage.get("sessions")):
             raise RuntimeWarning("No opened sessions available.")
+        sessions_data = []
+        for session_id in sessions:
+            session_platform = sessions[session_id]['Platform']
+            session_architecture = sessions[session_id]['Architecture']
+            session_type = sessions[session_id]['Type']
+            host = sessions[session_id]['Host']
+            port = sessions[session_id]['Port']
+
+            sessions_data.append((session_id, session_platform, session_architecture, session_type, host, port))
+        headers = ("ID", "Platform", "Architecture", "Type", "Host", "Port")
+        self.tables.print_table("Opened Sessions", headers, *sessions_data)
 
     def show_module_information(self, details):
         if not details:
@@ -442,10 +433,7 @@ class Show(object):
 
             for option in sorted(options):
                 value, required = options[option]['Value'], options[option]['Required']
-                if required:
-                    required = "yes"
-                else:
-                    required = "no"
+                required = "yes" if required else "no"
                 if not value and value != 0:
                     value = ""
                 options_data.append((option, value, required, options[option]['Description']))
@@ -460,11 +448,8 @@ class Show(object):
 
                 for option in sorted(current_payload.options):
                     value, required = current_payload.options[option]['Value'], \
-                                      current_payload.options[option]['Required']
-                    if required:
-                        required = "yes"
-                    else:
-                        required = "no"
+                                          current_payload.options[option]['Required']
+                    required = "yes" if required else "no"
                     if not value and value != 0:
                         value = ""
                     options_data.append((option, value, required, current_payload.options[option]['Description']))
@@ -476,11 +461,8 @@ class Show(object):
 
                 for option in sorted(current_encoder.options):
                     value, required = current_encoder.options[option]['Value'], \
-                                      current_encoder.options[option]['Required']
-                    if required:
-                        required = "yes"
-                    else:
-                        required = "no"
+                                          current_encoder.options[option]['Required']
+                    required = "yes" if required else "no"
                     if not value and value != 0:
                         value = ""
                     options_data.append((option, value, required, current_encoder.options[option]['Description']))
@@ -507,10 +489,7 @@ class Show(object):
 
             for option in sorted(options):
                 value, required = options[option]['Value'], options[option]['Required']
-                if required:
-                    required = "yes"
-                else:
-                    required = "no"
+                required = "yes" if required else "no"
                 if not value and value != 0:
                     value = ""
                 options_data.append((option, value, required, options[option]['Description']))
@@ -526,11 +505,8 @@ class Show(object):
 
                 for option in sorted(current_payload.advanced):
                     value, required = current_payload.advanced[option]['Value'], \
-                                      current_payload.advanced[option]['Required']
-                    if required:
-                        required = "yes"
-                    else:
-                        required = "no"
+                                          current_payload.advanced[option]['Required']
+                    required = "yes" if required else "no"
                     if not value and value != 0:
                         value = ""
                     options_data.append((option, value, required, current_payload.advanced[option]['Description']))
@@ -542,11 +518,8 @@ class Show(object):
 
                 for option in sorted(current_encoder.advanced):
                     value, required = current_encoder.advanced[option]['Value'], \
-                                      current_encoder.advanced[option]['Required']
-                    if required:
-                        required = "yes"
-                    else:
-                        required = "no"
+                                          current_encoder.advanced[option]['Required']
+                    required = "yes" if required else "no"
                     if not value and value != 0:
                         value = ""
                     options_data.append((option, value, required, current_encoder.advanced[option]['Description']))

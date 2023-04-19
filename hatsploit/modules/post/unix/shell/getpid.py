@@ -39,9 +39,6 @@ class HatSploitModule(Module, Sessions):
 
     def run(self):
         session = self.parse_options(self.options)
-        session = self.get_session(session)
-
-        if session:
-            pid = session.send_command("printf $$", True).strip()
-            if pid:
+        if session := self.get_session(session):
+            if pid := session.send_command("printf $$", True).strip():
                 self.print_information(f"PID: {pid}")

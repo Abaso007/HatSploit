@@ -45,24 +45,26 @@ class Builder(object):
         self.local_storage = LocalStorage()
 
     def check_base_built(self):
-        if (
+        return bool(
+            (
                 os.path.exists(
                     self.config.path_config['db_path']
                     + self.config.db_config['base_dbs']['module_database']
                 )
                 and os.path.exists(
-            self.config.path_config['db_path'] + self.config.db_config['base_dbs']['payload_database'])
+                    self.config.path_config['db_path']
+                    + self.config.db_config['base_dbs']['payload_database']
+                )
                 and os.path.exists(
-            self.config.path_config['db_path']
-            + self.config.db_config['base_dbs']['plugin_database']
-        )
+                    self.config.path_config['db_path']
+                    + self.config.db_config['base_dbs']['plugin_database']
+                )
                 and os.path.exists(
-            self.config.path_config['db_path']
-            + self.config.db_config['base_dbs']['encoder_database']
+                    self.config.path_config['db_path']
+                    + self.config.db_config['base_dbs']['encoder_database']
+                )
+            )
         )
-        ):
-            return True
-        return False
 
     def rebuild_base(self):
         if self.check_base_build():
@@ -111,28 +113,20 @@ class Builder(object):
         for dest, _, files in os.walk(encoders_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    encoder = dest + '/' + file[:-3]
+                    encoder = f'{dest}/{file[:-3]}'
 
                     try:
                         encoder_object = self.importer.import_encoder(encoder)
                         encoder_name = encoder_object.details['Encoder']
 
-                        database.update(
-                            {
-                                encoder_name: {
-                                    "Path": encoder,
-                                    "Name": encoder_object.details['Name'],
-                                    "Encoder": encoder_object.details['Encoder'],
-                                    "Authors": encoder_object.details['Authors'],
-                                    "Desctiption": encoder_object.details[
-                                        'Description'
-                                    ],
-                                    "Architecture": encoder_object.details[
-                                        'Architecture'
-                                    ],
-                                }
-                            }
-                        )
+                        database[encoder_name] = {
+                            "Path": encoder,
+                            "Name": encoder_object.details['Name'],
+                            "Encoder": encoder_object.details['Encoder'],
+                            "Authors": encoder_object.details['Authors'],
+                            "Desctiption": encoder_object.details['Description'],
+                            "Architecture": encoder_object.details['Architecture'],
+                        }
                     except Exception:
                         self.badges.print_error(
                             f"Failed to add {encoder} to encoder database!"
@@ -149,31 +143,23 @@ class Builder(object):
         for dest, _, files in os.walk(payloads_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    payload = dest + '/' + file[:-3]
+                    payload = f'{dest}/{file[:-3]}'
 
                     try:
                         payload_object = self.importer.import_payload(payload)
                         payload_name = payload_object.details['Payload']
 
-                        database.update(
-                            {
-                                payload_name: {
-                                    "Path": payload,
-                                    "Name": payload_object.details['Name'],
-                                    "Payload": payload_object.details['Payload'],
-                                    "Authors": payload_object.details['Authors'],
-                                    "Description": payload_object.details[
-                                        'Description'
-                                    ],
-                                    "Architecture": payload_object.details[
-                                        'Architecture'
-                                    ],
-                                    "Platform": payload_object.details['Platform'],
-                                    "Rank": payload_object.details['Rank'],
-                                    "Type": payload_object.details['Type'],
-                                }
-                            }
-                        )
+                        database[payload_name] = {
+                            "Path": payload,
+                            "Name": payload_object.details['Name'],
+                            "Payload": payload_object.details['Payload'],
+                            "Authors": payload_object.details['Authors'],
+                            "Description": payload_object.details['Description'],
+                            "Architecture": payload_object.details['Architecture'],
+                            "Platform": payload_object.details['Platform'],
+                            "Rank": payload_object.details['Rank'],
+                            "Type": payload_object.details['Type'],
+                        }
                     except Exception:
                         self.badges.print_error(
                             f"Failed to add {payload} to payload database!"
@@ -190,26 +176,22 @@ class Builder(object):
         for dest, _, files in os.walk(modules_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    module = dest + '/' + file[:-3]
+                    module = f'{dest}/{file[:-3]}'
 
                     try:
                         module_object = self.importer.import_module(module)
                         module_name = module_object.details['Module']
 
-                        database.update(
-                            {
-                                module_name: {
-                                    "Path": module,
-                                    "Category": module_object.details['Category'],
-                                    "Name": module_object.details['Name'],
-                                    "Module": module_object.details['Module'],
-                                    "Authors": module_object.details['Authors'],
-                                    "Description": module_object.details['Description'],
-                                    "Platform": module_object.details['Platform'],
-                                    "Rank": module_object.details['Rank'],
-                                }
-                            }
-                        )
+                        database[module_name] = {
+                            "Path": module,
+                            "Category": module_object.details['Category'],
+                            "Name": module_object.details['Name'],
+                            "Module": module_object.details['Module'],
+                            "Authors": module_object.details['Authors'],
+                            "Description": module_object.details['Description'],
+                            "Platform": module_object.details['Platform'],
+                            "Rank": module_object.details['Rank'],
+                        }
                     except Exception:
                         self.badges.print_error(
                             f"Failed to add {module} to module database!"
@@ -226,23 +208,19 @@ class Builder(object):
         for dest, _, files in os.walk(plugins_path):
             for file in files:
                 if file.endswith('.py') and file != '__init__.py':
-                    plugin = dest + '/' + file[:-3]
+                    plugin = f'{dest}/{file[:-3]}'
 
                     try:
                         plugin_object = self.importer.import_plugin(plugin)
                         plugin_name = plugin_object.details['Plugin']
 
-                        database.update(
-                            {
-                                plugin_name: {
-                                    "Path": plugin,
-                                    "Name": plugin_object.details['Name'],
-                                    "Plugin": plugin_object.details['Plugin'],
-                                    "Authors": plugin_object.details['Authors'],
-                                    "Description": plugin_object.details['Description'],
-                                }
-                            }
-                        )
+                        database[plugin_name] = {
+                            "Path": plugin,
+                            "Name": plugin_object.details['Name'],
+                            "Plugin": plugin_object.details['Plugin'],
+                            "Authors": plugin_object.details['Authors'],
+                            "Description": plugin_object.details['Description'],
+                        }
                     except Exception:
                         self.badges.print_error(
                             f"Failed to add {plugin} to plugin database!"

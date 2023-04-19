@@ -24,6 +24,4 @@ class HatSploitPayload(Payload):
         }
 
     def run(self):
-        payload = "reboot"
-
-        return payload
+        return "reboot"

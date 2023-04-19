@@ -43,8 +43,7 @@ class HatSploitCommand(Command):
                 self.show.show_module_information(
                     None
                 )
+        elif argc > 1:
+            self.get_module_information(argv[1])
         else:
-            if argc > 1:
-                self.get_module_information(argv[1])
-            else:
-                self.print_usage(self.details['Usage'])
+            self.print_usage(self.details['Usage'])

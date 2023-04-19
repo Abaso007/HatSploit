@@ -46,10 +46,10 @@ class HatSploitModule(Module, Assembler):
         path = self.parse_options(self.options)
         executable, payload = self.payload['Executable'], self.payload['Payload']
 
-        self.print_information(f"Payload size: {str(len(payload))}")
-        self.print_information(f"Executable size: {str(len(executable))}")
+        self.print_information(f"Payload size: {len(payload)}")
+        self.print_information(f"Executable size: {len(executable)}")
 
-        self.print_information(f"Payload hex view:")
+        self.print_information("Payload hex view:")
         for line in self.hexdump(payload):
             self.print_empty(line)
 

@@ -75,19 +75,15 @@ class HatSploitPlugin(Plugin):
                 self.handler.disconnect(self.tunnels[int(argv[2])][1])
                 self.tunnels.pop(int(argv[2]))
             except Exception:
-                self.print_error(f"Invalid tunnel given!")
+                self.print_error("Invalid tunnel given!")
 
         elif argv[1] in ['-l', '--list']:
-            headers = ('ID', 'Connection')
+            if tunnels_data := [
+                (tunnel_id, tunnel[0])
+                for tunnel_id, tunnel in enumerate(self.tunnels)
+            ]:
+                headers = ('ID', 'Connection')
 
-            tunnel_id = 0
-            tunnels_data = []
-
-            for tunnel in self.tunnels:
-                tunnels_data.append((tunnel_id, tunnel[0]))
-                tunnel_id += 1
-
-            if tunnels_data:
                 self.print_table('Active Tunnels', headers, *tunnels_data)
             else:
                 self.print_warning("No active tunnels available.")

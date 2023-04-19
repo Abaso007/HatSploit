@@ -34,12 +34,11 @@ class HatSploitCommand(Command):
             self.show.show_search_payloads(argv[2])
             self.show.show_search_encoders(argv[2])
             self.show.show_search_plugins(argv[2])
-        else:
-            if argv[2] == 'modules':
-                self.show.show_search_modules(argv[3])
-            elif argv[2] == 'payloads':
-                self.show.show_search_payloads(argv[3])
-            elif argv[2] == 'encoders':
-                self.show.show_search_encoders(argv[3])
-            elif argv[2] == 'plugins':
-                self.show.show_search_plugins(argv[3])
+        elif argv[2] == 'modules':
+            self.show.show_search_modules(argv[3])
+        elif argv[2] == 'payloads':
+            self.show.show_search_payloads(argv[3])
+        elif argv[2] == 'encoders':
+            self.show.show_search_encoders(argv[3])
+        elif argv[2] == 'plugins':
+            self.show.show_search_plugins(argv[3])

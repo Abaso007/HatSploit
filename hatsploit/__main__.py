@@ -74,22 +74,23 @@ class HatSploit(object):
         return True
 
     def launch(self, shell=True, script=[]):
-        if self.runtime.catch(self.runtime.check) is not Exception:
-            if self.policy():
-                build = False
+        if self.runtime.catch(self.runtime.check) is Exception:
+            return
+        if self.policy():
+            build = False
 
-                if not self.builder.check_base_built():
-                    build = self.badges.input_question(
-                        "Do you want to build and connect base databases? [y/n] "
-                    )
-                    build = build[0].lower() in ['y', 'yes']
+            if not self.builder.check_base_built():
+                build = self.badges.input_question(
+                    "Do you want to build and connect base databases? [y/n] "
+                )
+                build = build[0].lower() in ['y', 'yes']
 
-                if self.runtime.catch(self.runtime.start, [build]) is not Exception:
-                    if not script:
-                        if shell:
-                            self.console.shell()
-                    else:
-                        self.console.script(script, shell)
+            if self.runtime.catch(self.runtime.start, [build]) is not Exception:
+                if script:
+                    self.console.script(script, shell)
+
+                elif shell:
+                    self.console.shell()
 
     def cli(self):
         description = "Modular penetration testing platform that enables you to write, test, and execute exploit code."
@@ -191,10 +192,7 @@ class HatSploit(object):
             sys.exit(self.check.check_encoders())
 
         elif args.rest_api:
-            if not args.username and not args.password:
-                parser.print_help()
-                sys.exit(1)
-            else:
+            if args.username or args.password:
                 host, port = '127.0.0.1', 8008
                 if args.host:
                     host = args.host
@@ -210,6 +208,9 @@ class HatSploit(object):
                     f"REST API on port {str(port)}", None, rest_api.run
                 )
 
+            else:
+                parser.print_help()
+                sys.exit(1)
         elif args.update:
             self.update.update()
             sys.exit(0)
@@ -222,19 +223,17 @@ class HatSploit(object):
             if args.no_startup:
                 self.launch(shell=args.no_exit, script=[args.script])
 
-            else:
-                if os.path.exists(self.path_config['startup_path']):
-                    self.launch(
-                        shell=args.no_exit,
-                        script=[self.path_config['startup_path'], args.script],
-                    )
+            elif os.path.exists(self.path_config['startup_path']):
+                self.launch(
+                    shell=args.no_exit,
+                    script=[self.path_config['startup_path'], args.script],
+                )
 
             sys.exit(0)
 
         if args.no_startup:
             self.launch()
+        elif os.path.exists(self.path_config['startup_path']):
+            self.launch(script=[self.path_config['startup_path']])
         else:
-            if os.path.exists(self.path_config['startup_path']):
-                self.launch(script=[self.path_config['startup_path']])
-            else:
-                self.launch()
+            self.launch()

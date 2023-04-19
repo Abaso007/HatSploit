@@ -46,9 +46,7 @@ class Sessions(object):
         return sessions if sessions else {}
 
     def close_dead(self):
-        sessions = self.get_sessions()
-
-        if sessions:
+        if sessions := self.get_sessions():
             for session in list(sessions):
                 if not sessions[session]['Object'].heartbeat():
                     self.badges.print_warning(f"Session {str(session)} is dead (no heartbeat).")
@@ -79,23 +77,28 @@ class Sessions(object):
         return session_id
 
     def check_exist(self, session_id, session_platform=None, session_architecture=None, session_type=None):
-        sessions = self.get_sessions()
-
-        if sessions:
+        if sessions := self.get_sessions():
             if int(session_id) in sessions:
                 valid = True
 
-                if session_platform:
-                    if sessions[int(session_id)]['Platform'] != session_platform:
-                        valid = False
+                if (
+                    session_platform
+                    and sessions[int(session_id)]['Platform'] != session_platform
+                ):
+                    valid = False
 
-                if session_type:
-                    if sessions[int(session_id)]['Type'] != session_type:
-                        valid = False
+                if (
+                    session_type
+                    and sessions[int(session_id)]['Type'] != session_type
+                ):
+                    valid = False
 
-                if session_architecture:
-                    if sessions[int(session_id)]['Architecture'] != session_architecture:
-                        valid = False
+                if (
+                    session_architecture
+                    and sessions[int(session_id)]['Architecture']
+                    != session_architecture
+                ):
+                    valid = False
 
                 return valid
         return False
@@ -148,9 +151,7 @@ class Sessions(object):
             raise RuntimeError("Invalid session given!")
 
     def close_sessions(self):
-        sessions = self.get_sessions()
-
-        if sessions:
+        if sessions := self.get_sessions():
             for session in list(sessions):
                 try:
                     sessions[session]['Object'].close()

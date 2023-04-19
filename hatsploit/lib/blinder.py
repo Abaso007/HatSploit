@@ -48,8 +48,6 @@ class Blinder(object):
                 return
 
             self.badges.print_process("Sending command to target...")
-            output = self.post_tools.post_command(sender, command, args)
-
-            if output:
+            if output := self.post_tools.post_command(sender, command, args):
                 self.badges.print_empty(f'\n{output}')
             self.badges.print_empty('')

@@ -53,9 +53,7 @@ class HatSploitCommand(Command):
                 return
             try:
                 exec(' '.join(code))
-            except SystemExit:
-                return
-            except (EOFError, KeyboardInterrupt):
+            except (SystemExit, EOFError, KeyboardInterrupt):
                 return
             except Exception as e:
                 self.print_error(str(e))

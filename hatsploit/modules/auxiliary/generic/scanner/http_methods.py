@@ -52,14 +52,12 @@ class HatSploitModule(HTTPClient, Module, TCPTools):
         for port in [80, 443]:
             if self.check_tcp_port(remote_host, port):
                 for method in self.http_methods:
-                    resp = self.http_request(
+                    if resp := self.http_request(
                         method=method,
                         host=remote_host,
                         port=port,
                         path='/',
-                    )
-
-                    if resp:
+                    ):
                         if resp.status_code == 200:
                             self.supported_methods[str(port)].append(method)
                             self.supported_methods['count'] += 1

@@ -45,32 +45,25 @@ class Jobs(object):
         return jobs if jobs else {}
 
     def stop_dead(self):
-        jobs = self.get_jobs()
-        if jobs:
+        if jobs := self.get_jobs():
             for job_id in list(jobs):
                 if not jobs[job_id]['Process'].is_alive():
                     self.delete_job(job_id)
 
-        hidden_jobs = self.get_hidden_jobs()
-        if hidden_jobs:
+        if hidden_jobs := self.get_hidden_jobs():
             for job_id in list(hidden_jobs):
                 if not hidden_jobs[job_id]['Process'].is_alive():
                     self.delete_job(job_id, True)
 
     def count_jobs(self):
-        jobs = self.get_jobs()
-        if jobs:
-            return len(jobs)
-        return 0
+        return len(jobs) if (jobs := self.get_jobs()) else 0
 
     def stop_jobs(self):
-        jobs = self.get_jobs()
-        if jobs:
+        if jobs := self.get_jobs():
             for job_id in list(jobs):
                 self.delete_job(job_id)
 
-        hidden_jobs = self.get_hidden_jobs()
-        if hidden_jobs:
+        if hidden_jobs := self.get_hidden_jobs():
             for job_id in list(hidden_jobs):
                 self.delete_job(job_id, True)
 
@@ -90,10 +83,7 @@ class Jobs(object):
         self.job_process.start()
 
     def delete_job(self, job_id, hidden=False):
-        jobs_var = "jobs"
-        if hidden:
-            jobs_var = "hidden_jobs"
-
+        jobs_var = "hidden_jobs" if hidden else "jobs"
         if self.local_storage.get(jobs_var):
             job_id = int(job_id)
             if job_id in list(self.local_storage.get(jobs_var)):
@@ -105,10 +95,7 @@ class Jobs(object):
             raise RuntimeError("Invalid job given!")
 
     def create_job(self, job_name, module_name, job_function, job_arguments=[], hidden=False):
-        jobs_var = "jobs"
-        if hidden:
-            jobs_var = "hidden_jobs"
-
+        jobs_var = "hidden_jobs" if hidden else "jobs"
         self.start_job(job_function, job_arguments)
         if not self.local_storage.get(jobs_var):
             self.local_storage.set(jobs_var, {})

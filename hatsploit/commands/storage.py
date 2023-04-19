@@ -48,12 +48,10 @@ class HatSploitCommand(Command):
                     if not str.startswith(variable, '__') and not str.endswith(
                             variable, '__'
                     ):
-                        self.print_empty("    * " + variable)
+                        self.print_empty(f"    * {variable}")
             elif choice in ['-v', '--value']:
                 if argv[3] in self.global_storage.get_all():
-                    self.print_information(
-                        argv[3] + " = " + str(self.global_storage.get(argv[3]))
-                    )
+                    self.print_information(f"{argv[3]} = {str(self.global_storage.get(argv[3]))}")
             elif choice in ['-s', '--set']:
                 self.global_storage.set(argv[3], argv[4])
             elif choice in ['-d', '--delete']:
@@ -69,12 +67,10 @@ class HatSploitCommand(Command):
                     if not str.startswith(variable, '__') and not str.endswith(
                             variable, '__'
                     ):
-                        self.print_empty("    * " + variable)
+                        self.print_empty(f"    * {variable}")
             elif choice in ['-v', '--value']:
                 if argv[3] in self.local_storage.get_all():
-                    self.print_information(
-                        argv[3] + " = " + str(self.local_storage.get(argv[3]))
-                    )
+                    self.print_information(f"{argv[3]} = {str(self.local_storage.get(argv[3]))}")
                 else:
                     self.print_error("Invalid storage variable name!")
             elif choice in ['-s', '--set']:

@@ -32,8 +32,4 @@ class FMT(object):
     @staticmethod
     def format_commands(commands):
         commands = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''', commands)
-        formated_commands = []
-        for command in commands:
-            if command:
-                formated_commands.append(command.strip('"').strip("'"))
-        return formated_commands
+        return [command.strip('"').strip("'") for command in commands if command]

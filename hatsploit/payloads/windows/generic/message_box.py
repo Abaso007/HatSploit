@@ -40,5 +40,4 @@ class HatSploitPayload(Payload):
             f"[system.Windows.Forms.MessageBox]::show('{message}')"
         )
 
-        payload = f"powershell -w hidden -nop -c {source}"
-        return payload
+        return f"powershell -w hidden -nop -c {source}"

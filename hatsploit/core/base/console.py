@@ -94,8 +94,7 @@ class Console(object):
     def launch_history(self):
         readline.set_auto_history(False)
 
-        using_history = self.local_storage.get("history")
-        if using_history:
+        if using_history := self.local_storage.get("history"):
             readline.set_auto_history(True)
 
             if not os.path.exists(self.history):
@@ -141,8 +140,7 @@ class Console(object):
                 for database in modules:
                     modules_total += len(modules[database])
 
-            header = ""
-            header += "%end"
+            header = "" + "%end"
             if codename:
                 header += f"    --=( %yellowHatSploit Framework {version} {codename} (https://hatsploit.com)%end\n"
             else:
@@ -164,10 +162,8 @@ class Console(object):
 
         for input_file in input_files:
             if os.path.exists(input_file):
-                file = open(input_file, 'r')
-                file_text = file.read().split('\n')
-                file.close()
-
+                with open(input_file, 'r') as file:
+                    file_text = file.read().split('\n')
                 for line in file_text:
                     commands = self.fmt.format_commands(line)
 

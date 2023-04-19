@@ -24,6 +24,4 @@ class HatSploitPayload(Payload):
         }
 
     def run(self):
-        payload = "calc.exe"
-
-        return payload
+        return "calc.exe"

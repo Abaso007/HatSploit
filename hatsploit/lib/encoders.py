@@ -40,10 +40,11 @@ class Encoders(object):
 
         if encoders:
             for database in encoders:
-                for encoder in encoders[database]:
-                    if encoder.startswith(text):
-                        matches.append(encoder)
-
+                matches.extend(
+                    encoder
+                    for encoder in encoders[database]
+                    if encoder.startswith(text)
+                )
         return matches
 
     def get_encoders(self):
@@ -53,8 +54,7 @@ class Encoders(object):
         return self.local_storage.get("imported_encoders")
 
     def get_database(self, name):
-        all_encoders = self.get_encoders()
-        if all_encoders:
+        if all_encoders := self.get_encoders():
             for database in all_encoders:
                 encoders = all_encoders[database]
 
@@ -83,11 +83,14 @@ class Encoders(object):
             current_module_name = current_module.details['Module']
             current_payload_name = current_payload.details['Payload']
 
-            if current_module_name in imported_encoders:
-                if current_payload_name in imported_encoders[current_module_name]:
-                    if hasattr(current_payload, "options") and 'ENCODER' in current_payload.options:
-                        name = current_payload.options['ENCODER']['Value']
-                        return imported_encoders[current_module_name][current_payload_name][name]
+            if (
+                current_module_name in imported_encoders
+                and current_payload_name in imported_encoders[current_module_name]
+                and hasattr(current_payload, "options")
+                and 'ENCODER' in current_payload.options
+            ):
+                name = current_payload.options['ENCODER']['Value']
+                return imported_encoders[current_module_name][current_payload_name][name]
         return None
 
     def import_encoder(self, module_name, payload_name, encoder):
@@ -132,8 +135,7 @@ class Encoders(object):
         return encoder_object
 
     def check_exist(self, encoder):
-        all_encoders = self.get_encoders()
-        if all_encoders:
+        if all_encoders := self.get_encoders():
             for database in all_encoders:
                 encoders = all_encoders[database]
 
@@ -147,12 +149,13 @@ class Encoders(object):
         current_payload_name = payload_name
         current_module_name = module_name
 
-        if imported_encoders:
-            if current_module_name in imported_encoders:
-                if current_payload_name in imported_encoders[current_module_name]:
-                    if encoder in imported_encoders[current_module_name][current_payload_name]:
-                        return True
-        return False
+        return bool(
+            imported_encoders
+            and current_module_name in imported_encoders
+            and current_payload_name in imported_encoders[current_module_name]
+            and encoder
+            in imported_encoders[current_module_name][current_payload_name]
+        )
 
     def check_payload_compatible(self, value, architecture):
         if self.check_exist(value):

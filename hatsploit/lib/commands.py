@@ -51,21 +51,25 @@ class Commands(object):
         self.execute.execute_system(commands)
 
     def execute_custom_command(self, commands, handler, error=True):
-        if commands:
-            if not self.execute.execute_builtin_method(commands):
-                if not self.execute.execute_custom_command(commands, handler):
-                    if error:
-                        raise RuntimeError(f"Unrecognized command: {commands[0]}!")
-                    return False
+        if (
+            commands
+            and not self.execute.execute_builtin_method(commands)
+            and not self.execute.execute_custom_command(commands, handler)
+        ):
+            if error:
+                raise RuntimeError(f"Unrecognized command: {commands[0]}!")
+            return False
         return True
 
     def execute_custom_plugin_command(self, commands, plugins, error=True):
-        if commands:
-            if not self.execute.execute_builtin_method(commands):
-                if not self.execute.execute_custom_plugin_command(commands, plugins):
-                    if error:
-                        raise RuntimeError(f"Unrecognized command: {commands[0]}!")
-                    return False
+        if (
+            commands
+            and not self.execute.execute_builtin_method(commands)
+            and not self.execute.execute_custom_plugin_command(commands, plugins)
+        ):
+            if error:
+                raise RuntimeError(f"Unrecognized command: {commands[0]}!")
+            return False
         return True
 
     def show_commands(self, handler):
@@ -78,9 +82,7 @@ class Commands(object):
         return self.local_storage.get("commands")
 
     def get_modules_commands(self):
-        module = self.modules.get_current_module()
-
-        if module:
+        if module := self.modules.get_current_module():
             return module.commands if hasattr(module, "commands") else {}
         return {}
 
@@ -92,21 +94,17 @@ class Commands(object):
             for plugin in plugins:
                 if hasattr(plugins[plugin], "commands"):
                     for label in plugins[plugin].commands:
-                        commands.update(plugins[plugin].commands[label])
+                        commands |= plugins[plugin].commands[label]
 
         return commands
 
     def get_all_commands(self):
         commands = {}
-        module = self.modules.get_current_module()
-
-        if module:
+        if module := self.modules.get_current_module():
             if hasattr(module, "commands"):
-                commands.update(module.commands)
+                commands |= module.commands
 
-        plugins = self.local_storage.get("loaded_plugins")
-
-        if plugins:
+        if plugins := self.local_storage.get("loaded_plugins"):
             for plugin in plugins:
                 if hasattr(plugins[plugin], "commands"):
                     for label in plugins[plugin].commands:

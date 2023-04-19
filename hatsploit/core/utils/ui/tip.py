@@ -45,11 +45,8 @@ class Tip(object):
 
     def print_random_tip(self):
         if os.path.exists(self.config.path_config['tips_path']):
-            tips = []
             all_tips = os.listdir(self.config.path_config['tips_path'])
-            for tip in all_tips:
-                tips.append(tip)
-            if tips:
+            if tips := list(all_tips):
                 tip = ""
                 while not tip:
                     random_tip = random.randint(0, len(tips) - 1)

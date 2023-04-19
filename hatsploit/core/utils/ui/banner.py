@@ -45,11 +45,8 @@ class Banner(object):
 
     def print_random_banner(self):
         if os.path.exists(self.config.path_config['banners_path']):
-            banners = []
             all_banners = os.listdir(self.config.path_config['banners_path'])
-            for banner in all_banners:
-                banners.append(banner)
-            if banners:
+            if banners := list(all_banners):
                 banner = ""
                 while not banner:
                     random_banner = random.randint(0, len(banners) - 1)
